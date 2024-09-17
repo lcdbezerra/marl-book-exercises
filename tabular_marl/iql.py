@@ -56,8 +56,12 @@ class IQL:
         :return (List[int]): index of selected action for each agent
         """
         actions = []
-        ### PUT YOUR CODE HERE ###
-        raise NotImplementedError("Need to implement the act() function of IQL")
+        for i,obs in enumerate(obss):
+            if random.random() < self.epsilon:
+                actions.append(random.randint(0, self.n_acts[i] - 1))
+            else:
+                act = max(range(self.n_acts[i]), key=lambda a: self.q_tables[i][str((obs, a))])
+                actions.append(act)
         return actions
 
     def learn(
@@ -79,8 +83,14 @@ class IQL:
         :param done (bool): flag indicating whether a terminal state has been reached
         :return (List[float]): updated Q-values for current actions of each agent
         """
-        ### PUT YOUR CODE HERE ###
-        raise NotImplementedError("Need to implement the learn() function of IQL")
+        
+        for obs, act, rwd, n_obs in zip(obss, actions, rewards, n_obss):
+            for i in range(self.num_agents):
+                Q  = self.q_tables[i][str((obs, act))]
+                Qn = max([self.q_tables[i][str((n_obs, n_act))] for n_act in range(self.n_acts[i])])
+                Q_new = Q + self.learning_rate * (rwd + self.gamma * Qn - Q)
+                self.q_tables[i][str((obs, act))] = Q_new
+        return self.q_tables
 
     def schedule_hyperparameters(self, timestep: int, max_timestep: int):
         """Updates the hyperparameters

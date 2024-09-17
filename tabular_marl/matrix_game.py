@@ -46,3 +46,9 @@ def create_pd_game(ep_length=1):
     payoff_matrix = np.array([[[3, 3], [0, 5]], [[5, 0], [1, 1]]])
     return MatrixGame(payoff_matrix, ep_length)
 
+if __name__=="__main__":
+    pd_game = create_pd_game()
+    print(pd_game.action_space)
+    print(pd_game.observation_space)
+    print(pd_game.reset())
+    print(pd_game.step([0, 0]))
